@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.historyBx = new System.Windows.Forms.RichTextBox();
-            this.memoryBtn = new System.Windows.Forms.Button();
+            this.dumpVMBtn = new System.Windows.Forms.Button();
             this.stepBtn = new System.Windows.Forms.Button();
             this.stopBtn = new System.Windows.Forms.Button();
             this.startBtn = new System.Windows.Forms.Button();
@@ -89,20 +89,21 @@
             this.historyBx.TabIndex = 0;
             this.historyBx.Text = "";
             // 
-            // memoryBtn
+            // dumpVMBtn
             // 
-            this.memoryBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
-            this.memoryBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.memory;
-            this.memoryBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.memoryBtn.Enabled = false;
-            this.memoryBtn.FlatAppearance.BorderSize = 0;
-            this.memoryBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.memoryBtn.Location = new System.Drawing.Point(554, 5);
-            this.memoryBtn.Name = "memoryBtn";
-            this.memoryBtn.Size = new System.Drawing.Size(35, 35);
-            this.memoryBtn.TabIndex = 16;
-            this.toolTip.SetToolTip(this.memoryBtn, "Memory Editor");
-            this.memoryBtn.UseVisualStyleBackColor = false;
+            this.dumpVMBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
+            this.dumpVMBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.memory;
+            this.dumpVMBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.dumpVMBtn.Enabled = false;
+            this.dumpVMBtn.FlatAppearance.BorderSize = 0;
+            this.dumpVMBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.dumpVMBtn.Location = new System.Drawing.Point(554, 5);
+            this.dumpVMBtn.Name = "dumpVMBtn";
+            this.dumpVMBtn.Size = new System.Drawing.Size(35, 35);
+            this.dumpVMBtn.TabIndex = 16;
+            this.toolTip.SetToolTip(this.dumpVMBtn, "Dump VM State");
+            this.dumpVMBtn.UseVisualStyleBackColor = false;
+            this.dumpVMBtn.Click += new System.EventHandler(this.DumpVMBtn_Click);
             // 
             // stepBtn
             // 
@@ -553,7 +554,7 @@
             this.Controls.Add(this.resetBtn);
             this.Controls.Add(this.r7Bx);
             this.Controls.Add(this.newFromBinBtn);
-            this.Controls.Add(this.memoryBtn);
+            this.Controls.Add(this.dumpVMBtn);
             this.Controls.Add(this.pointerBx);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.r6Bx);
@@ -620,7 +621,7 @@
         private System.Windows.Forms.NumericUpDown r0Bx;
         private System.Windows.Forms.RichTextBox consoleOutBx;
         private System.Windows.Forms.TextBox consoleInBx;
-        private System.Windows.Forms.Button memoryBtn;
+        private System.Windows.Forms.Button dumpVMBtn;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button exitBtn;

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 namespace SynacorExecutor
 {
+    [Serializable]
     public class VM
     {
         // Core Parts
@@ -24,9 +25,9 @@ namespace SynacorExecutor
 
         // Control
         public bool Halted { get; set; }
+        [JsonIgnore]
         public bool IsStepping { get; set; }
         [JsonIgnore]
-
         private ushort Modulo;
 
         public VM(ushort[] startingMemory)
@@ -177,7 +178,7 @@ namespace SynacorExecutor
                     break;
                 case OpCode.In:
                     var c = In.Invoke();
-                    if (!c.HasValue) { return OpCode.Cancelled; }
+                    if (!c.HasValue) { IsStepping = false; return OpCode.Cancelled; }
                     SetValue(c.Value, P(0));
                     paramCount = 1;
                     break;

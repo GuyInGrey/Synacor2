@@ -68,19 +68,9 @@ namespace SynacorDebug
             stepsSpeedLabel.Text = "Speed: " + 
                 (1000 / AverageInstructionTime).ToString("#,#.#") + " /second";
 
-            if (Machine is not null)
+            if (ControlState != 0)
             {
-                r0Bx.Value = Machine.Registers[0];
-                r1Bx.Value = Machine.Registers[1];
-                r2Bx.Value = Machine.Registers[2];
-                r3Bx.Value = Machine.Registers[3];
-                r4Bx.Value = Machine.Registers[4];
-                r5Bx.Value = Machine.Registers[5];
-                r6Bx.Value = Machine.Registers[6];
-                r7Bx.Value = Machine.Registers[7];
-
-                pointerBx.Value = Machine.Pointer;
-
+                UpdateDebugBoxes();
             }
 
             this.ForAllControls(c =>
@@ -100,6 +90,7 @@ namespace SynacorDebug
             stepBtn.Enabled = Machine is not null && ControlState == 0 && !WaitingForInput;
             startBtn.Enabled = Machine is not null && ControlState == 0 && !Machine.Halted && !WaitingForInput;
             stopBtn.Enabled = Machine is not null && ControlState == 2 && !Machine.Halted;
+            dumpVMBtn.Enabled = Machine is not null;
 
             textQueueLabel.Text =
                 InputQueue.Count <= 0 ?
@@ -216,12 +207,32 @@ namespace SynacorDebug
             Machine.InstructionExecuted = (i) => instructionsToDebug.Add(i);
         }
 
+        public void UpdateDebugBoxes()
+        {
+            if (Machine is not null)
+            {
+                r0Bx.Value = Machine.Registers[0];
+                r1Bx.Value = Machine.Registers[1];
+                r2Bx.Value = Machine.Registers[2];
+                r3Bx.Value = Machine.Registers[3];
+                r4Bx.Value = Machine.Registers[4];
+                r5Bx.Value = Machine.Registers[5];
+                r6Bx.Value = Machine.Registers[6];
+                r7Bx.Value = Machine.Registers[7];
+
+                pointerBx.Value = Machine.Pointer;
+
+            }
+        }
+
         private void StepBtn_Click(object a, EventArgs e) => ControlState = 1;
         private void StartBtn_Click(object a, EventArgs e) => ControlState = 2;
         private void StopBtn_Click(object a, EventArgs e)
         {
             ControlState = 0;
             if (WaitingForInput) { InputCancelled = true; }
+            while (Machine.IsStepping) { Thread.Sleep(1); }
+            UpdateDebugBoxes();
         }
         private void OnFormClosed(object a, FormClosedEventArgs e)
         {
@@ -278,8 +289,8 @@ namespace SynacorDebug
             Machine = new VM(Utility.ConvertFromBytes(Convert.FromBase64String(obj["memory"].Value<string>())))
             {
                 Pointer = obj["pointer"].Value<ushort>(),
-                Stack = new Stack<ushort>((obj["stack"] as JArray).Select(j => j.Value<ushort>())),
-                Registers = (obj["stack"] as JArray).Select(j => j.Value<ushort>()).ToArray(),
+                Stack = new Stack<ushort>((obj["stack"] as JArray).Select(j => j.Value<ushort>()).Reverse()),
+                Registers = (obj["registers"] as JArray).Select(j => j.Value<ushort>()).ToArray(),
                 Halted = obj["halted"].Value<bool>(),
             };
             SetupVM();
@@ -423,6 +434,15 @@ namespace SynacorDebug
                 }
             }
             base.WndProc(ref m);
+        }
+
+        private void DumpVMBtn_Click(object sender, EventArgs e)
+        {
+            var dia = new SaveFileDialog() { Filter = "VM Dump (Cannot be reloaded)|*.json", };
+            if (dia.ShowDialog() != DialogResult.OK) { return; }
+
+            File.WriteAllText(dia.FileName, JsonConvert.SerializeObject(Machine, Formatting.Indented));
+            MessageBox.Show("VM Dumped\n\n" + dia.FileName, "Dump Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
