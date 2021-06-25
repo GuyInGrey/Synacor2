@@ -458,6 +458,7 @@
             this.setRegisters.Size = new System.Drawing.Size(35, 35);
             this.setRegisters.TabIndex = 43;
             this.setRegisters.Tag = "requireMachine";
+            this.toolTip.SetToolTip(this.setRegisters, "Modify VM Registers");
             this.setRegisters.UseVisualStyleBackColor = false;
             this.setRegisters.Click += new System.EventHandler(this.SetRegisters_Click);
             // 
