@@ -1,6 +1,6 @@
 ﻿namespace SynacorExecutor
 {
-    public enum OpCode
+    public enum OpCode : byte
     {
         Halt = 0,
         Set = 1,
@@ -24,6 +24,6 @@
         Out = 19,
         In = 20,
         Noop = 21,
-        Invalid,
+        Cancelled = 22,
     }
 }

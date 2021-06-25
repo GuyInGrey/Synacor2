@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.historyBx = new System.Windows.Forms.RichTextBox();
             this.memoryBtn = new System.Windows.Forms.Button();
             this.stepBtn = new System.Windows.Forms.Button();
@@ -48,11 +49,6 @@
             this.r1Bx = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.r0Bx = new System.Windows.Forms.NumericUpDown();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.stepsLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.stepsSpeedLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.textQueueLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.consoleOutBx = new System.Windows.Forms.RichTextBox();
             this.consoleInBx = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -60,6 +56,12 @@
             this.exitBtn = new System.Windows.Forms.Button();
             this.setRegisters = new System.Windows.Forms.Button();
             this.loadHistoryBtn = new System.Windows.Forms.Button();
+            this.maxBtn = new System.Windows.Forms.Button();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.statusLabel = new System.Windows.Forms.Label();
+            this.stepsLabel = new System.Windows.Forms.Label();
+            this.stepsSpeedLabel = new System.Windows.Forms.Label();
+            this.textQueueLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.r7Bx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pointerBx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.r6Bx)).BeginInit();
@@ -69,7 +71,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.r2Bx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.r1Bx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.r0Bx)).BeginInit();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // historyBx
@@ -84,7 +85,7 @@
             this.historyBx.Location = new System.Drawing.Point(12, 47);
             this.historyBx.Name = "historyBx";
             this.historyBx.ReadOnly = true;
-            this.historyBx.Size = new System.Drawing.Size(231, 478);
+            this.historyBx.Size = new System.Drawing.Size(231, 474);
             this.historyBx.TabIndex = 0;
             this.historyBx.Text = "";
             // 
@@ -100,6 +101,7 @@
             this.memoryBtn.Name = "memoryBtn";
             this.memoryBtn.Size = new System.Drawing.Size(35, 35);
             this.memoryBtn.TabIndex = 16;
+            this.toolTip.SetToolTip(this.memoryBtn, "Memory Editor");
             this.memoryBtn.UseVisualStyleBackColor = false;
             // 
             // stepBtn
@@ -110,10 +112,11 @@
             this.stepBtn.Enabled = false;
             this.stepBtn.FlatAppearance.BorderSize = 0;
             this.stepBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.stepBtn.Location = new System.Drawing.Point(331, 6);
+            this.stepBtn.Location = new System.Drawing.Point(331, 5);
             this.stepBtn.Name = "stepBtn";
             this.stepBtn.Size = new System.Drawing.Size(35, 35);
             this.stepBtn.TabIndex = 13;
+            this.toolTip.SetToolTip(this.stepBtn, "Execute One Instruction");
             this.stepBtn.UseVisualStyleBackColor = false;
             this.stepBtn.Click += new System.EventHandler(this.StepBtn_Click);
             // 
@@ -125,10 +128,11 @@
             this.stopBtn.Enabled = false;
             this.stopBtn.FlatAppearance.BorderSize = 0;
             this.stopBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.stopBtn.Location = new System.Drawing.Point(290, 6);
+            this.stopBtn.Location = new System.Drawing.Point(290, 5);
             this.stopBtn.Name = "stopBtn";
             this.stopBtn.Size = new System.Drawing.Size(35, 35);
             this.stopBtn.TabIndex = 12;
+            this.toolTip.SetToolTip(this.stopBtn, "Pause Execution");
             this.stopBtn.UseVisualStyleBackColor = false;
             this.stopBtn.Click += new System.EventHandler(this.StopBtn_Click);
             // 
@@ -140,10 +144,11 @@
             this.startBtn.Enabled = false;
             this.startBtn.FlatAppearance.BorderSize = 0;
             this.startBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.startBtn.Location = new System.Drawing.Point(249, 6);
+            this.startBtn.Location = new System.Drawing.Point(249, 5);
             this.startBtn.Name = "startBtn";
             this.startBtn.Size = new System.Drawing.Size(35, 35);
             this.startBtn.TabIndex = 11;
+            this.toolTip.SetToolTip(this.startBtn, "Resume Execution");
             this.startBtn.UseVisualStyleBackColor = false;
             this.startBtn.Click += new System.EventHandler(this.StartBtn_Click);
             // 
@@ -158,6 +163,7 @@
             this.resetBtn.Name = "resetBtn";
             this.resetBtn.Size = new System.Drawing.Size(35, 35);
             this.resetBtn.TabIndex = 9;
+            this.toolTip.SetToolTip(this.resetBtn, "Reset All");
             this.resetBtn.UseVisualStyleBackColor = false;
             this.resetBtn.Click += new System.EventHandler(this.ResetBtn_Click);
             // 
@@ -172,6 +178,7 @@
             this.newFromBinBtn.Name = "newFromBinBtn";
             this.newFromBinBtn.Size = new System.Drawing.Size(35, 35);
             this.newFromBinBtn.TabIndex = 8;
+            this.toolTip.SetToolTip(this.newFromBinBtn, "Load New From .bin");
             this.newFromBinBtn.UseVisualStyleBackColor = false;
             this.newFromBinBtn.Click += new System.EventHandler(this.NewFromBinBtn_Click);
             // 
@@ -183,10 +190,11 @@
             this.saveStateBtn.Enabled = false;
             this.saveStateBtn.FlatAppearance.BorderSize = 0;
             this.saveStateBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.saveStateBtn.Location = new System.Drawing.Point(463, 6);
+            this.saveStateBtn.Location = new System.Drawing.Point(422, 5);
             this.saveStateBtn.Name = "saveStateBtn";
             this.saveStateBtn.Size = new System.Drawing.Size(35, 35);
             this.saveStateBtn.TabIndex = 6;
+            this.toolTip.SetToolTip(this.saveStateBtn, "Save VM State");
             this.saveStateBtn.UseVisualStyleBackColor = false;
             this.saveStateBtn.Click += new System.EventHandler(this.SaveStateBtn_Click);
             // 
@@ -197,10 +205,11 @@
             this.loadStateBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.loadStateBtn.FlatAppearance.BorderSize = 0;
             this.loadStateBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.loadStateBtn.Location = new System.Drawing.Point(422, 5);
+            this.loadStateBtn.Location = new System.Drawing.Point(463, 5);
             this.loadStateBtn.Name = "loadStateBtn";
             this.loadStateBtn.Size = new System.Drawing.Size(35, 35);
             this.loadStateBtn.TabIndex = 5;
+            this.toolTip.SetToolTip(this.loadStateBtn, "Load Saved VM State");
             this.loadStateBtn.UseVisualStyleBackColor = false;
             this.loadStateBtn.Click += new System.EventHandler(this.LoadStateBtn_Click);
             // 
@@ -225,7 +234,7 @@
             this.pointerBx.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.pointerBx.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.pointerBx.ForeColor = System.Drawing.Color.White;
-            this.pointerBx.Location = new System.Drawing.Point(1385, 17);
+            this.pointerBx.Location = new System.Drawing.Point(1311, 16);
             this.pointerBx.Maximum = new decimal(new int[] {
             32768,
             0,
@@ -239,7 +248,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(1323, 19);
+            this.label3.Location = new System.Drawing.Point(1249, 18);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(56, 14);
             this.label3.TabIndex = 15;
@@ -366,50 +375,6 @@
             this.r0Bx.TabIndex = 18;
             this.r0Bx.Tag = "requireMachine";
             // 
-            // statusStrip1
-            // 
-            this.statusStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(41)))), ((int)(((byte)(61)))));
-            this.statusStrip1.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel,
-            this.stepsLabel,
-            this.stepsSpeedLabel,
-            this.textQueueLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 528);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1520, 22);
-            this.statusStrip1.TabIndex = 4;
-            // 
-            // statusLabel
-            // 
-            this.statusLabel.ForeColor = System.Drawing.Color.White;
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(147, 17);
-            this.statusLabel.Text = "Status: No VM Loaded";
-            // 
-            // stepsLabel
-            // 
-            this.stepsLabel.ForeColor = System.Drawing.Color.White;
-            this.stepsLabel.Margin = new System.Windows.Forms.Padding(15, 3, 0, 2);
-            this.stepsLabel.Name = "stepsLabel";
-            this.stepsLabel.Size = new System.Drawing.Size(133, 17);
-            this.stepsLabel.Text = "Steps Completed: 0";
-            // 
-            // stepsSpeedLabel
-            // 
-            this.stepsSpeedLabel.ForeColor = System.Drawing.Color.White;
-            this.stepsSpeedLabel.Margin = new System.Windows.Forms.Padding(15, 3, 0, 2);
-            this.stepsSpeedLabel.Name = "stepsSpeedLabel";
-            this.stepsSpeedLabel.Size = new System.Drawing.Size(112, 17);
-            this.stepsSpeedLabel.Text = "Step Speed: 0/s";
-            // 
-            // textQueueLabel
-            // 
-            this.textQueueLabel.Margin = new System.Windows.Forms.Padding(15, 3, 0, 2);
-            this.textQueueLabel.Name = "textQueueLabel";
-            this.textQueueLabel.Size = new System.Drawing.Size(98, 17);
-            this.textQueueLabel.Text = "Queued Text: ";
-            // 
             // consoleOutBx
             // 
             this.consoleOutBx.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -423,7 +388,7 @@
             this.consoleOutBx.Location = new System.Drawing.Point(249, 47);
             this.consoleOutBx.Name = "consoleOutBx";
             this.consoleOutBx.ReadOnly = true;
-            this.consoleOutBx.Size = new System.Drawing.Size(1259, 444);
+            this.consoleOutBx.Size = new System.Drawing.Size(1204, 440);
             this.consoleOutBx.TabIndex = 36;
             this.consoleOutBx.Text = "";
             // 
@@ -435,10 +400,10 @@
             this.consoleInBx.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.consoleInBx.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.consoleInBx.ForeColor = System.Drawing.Color.White;
-            this.consoleInBx.Location = new System.Drawing.Point(249, 497);
+            this.consoleInBx.Location = new System.Drawing.Point(249, 493);
             this.consoleInBx.Multiline = true;
             this.consoleInBx.Name = "consoleInBx";
-            this.consoleInBx.Size = new System.Drawing.Size(1259, 28);
+            this.consoleInBx.Size = new System.Drawing.Size(1204, 28);
             this.consoleInBx.TabIndex = 37;
             this.consoleInBx.TextChanged += new System.EventHandler(this.ConsoleInBx_TextChanged);
             // 
@@ -455,6 +420,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Consolas", 18F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
+            this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(41)))), ((int)(((byte)(61)))));
             this.label1.Location = new System.Drawing.Point(76, 1);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(103, 28);
@@ -471,11 +437,12 @@
             this.exitBtn.FlatAppearance.BorderSize = 0;
             this.exitBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.exitBtn.Font = new System.Drawing.Font("Cooper Black", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.exitBtn.Location = new System.Drawing.Point(1473, 6);
+            this.exitBtn.Location = new System.Drawing.Point(1418, 5);
             this.exitBtn.Name = "exitBtn";
             this.exitBtn.Size = new System.Drawing.Size(35, 35);
             this.exitBtn.TabIndex = 42;
             this.exitBtn.Text = "✕";
+            this.toolTip.SetToolTip(this.exitBtn, "Exit");
             this.exitBtn.UseVisualStyleBackColor = false;
             this.exitBtn.Click += new System.EventHandler(this.ExitBtn_Click);
             // 
@@ -501,22 +468,85 @@
             this.loadHistoryBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.loadHistoryBtn.FlatAppearance.BorderSize = 0;
             this.loadHistoryBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.loadHistoryBtn.Location = new System.Drawing.Point(12, 6);
+            this.loadHistoryBtn.Location = new System.Drawing.Point(12, 5);
             this.loadHistoryBtn.Name = "loadHistoryBtn";
             this.loadHistoryBtn.Size = new System.Drawing.Size(35, 35);
             this.loadHistoryBtn.TabIndex = 44;
+            this.toolTip.SetToolTip(this.loadHistoryBtn, "Load Instruction History (slow)");
             this.loadHistoryBtn.UseVisualStyleBackColor = false;
             this.loadHistoryBtn.Click += new System.EventHandler(this.LoadHistoryBtn_Click);
+            // 
+            // maxBtn
+            // 
+            this.maxBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.maxBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
+            this.maxBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.maxBtn.FlatAppearance.BorderSize = 0;
+            this.maxBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.maxBtn.Font = new System.Drawing.Font("Cooper Black", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.maxBtn.Location = new System.Drawing.Point(1377, 5);
+            this.maxBtn.Name = "maxBtn";
+            this.maxBtn.Size = new System.Drawing.Size(35, 35);
+            this.maxBtn.TabIndex = 42;
+            this.maxBtn.Text = "🗖";
+            this.toolTip.SetToolTip(this.maxBtn, "Maximize");
+            this.maxBtn.UseVisualStyleBackColor = false;
+            this.maxBtn.Click += new System.EventHandler(this.MaxBtn_Click);
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.statusLabel.AutoSize = true;
+            this.statusLabel.Location = new System.Drawing.Point(12, 524);
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(49, 14);
+            this.statusLabel.TabIndex = 45;
+            this.statusLabel.Text = "label2";
+            // 
+            // stepsLabel
+            // 
+            this.stepsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.stepsLabel.AutoSize = true;
+            this.stepsLabel.Location = new System.Drawing.Point(249, 524);
+            this.stepsLabel.Name = "stepsLabel";
+            this.stepsLabel.Size = new System.Drawing.Size(49, 14);
+            this.stepsLabel.TabIndex = 46;
+            this.stepsLabel.Text = "label2";
+            // 
+            // stepsSpeedLabel
+            // 
+            this.stepsSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.stepsSpeedLabel.AutoSize = true;
+            this.stepsSpeedLabel.Location = new System.Drawing.Point(554, 524);
+            this.stepsSpeedLabel.Name = "stepsSpeedLabel";
+            this.stepsSpeedLabel.Size = new System.Drawing.Size(49, 14);
+            this.stepsSpeedLabel.TabIndex = 47;
+            this.stepsSpeedLabel.Text = "label2";
+            // 
+            // textQueueLabel
+            // 
+            this.textQueueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textQueueLabel.AutoSize = true;
+            this.textQueueLabel.Location = new System.Drawing.Point(847, 524);
+            this.textQueueLabel.Name = "textQueueLabel";
+            this.textQueueLabel.Size = new System.Drawing.Size(49, 14);
+            this.textQueueLabel.TabIndex = 48;
+            this.textQueueLabel.Text = "label2";
             // 
             // SynacorDebug
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(100)))), ((int)(((byte)(148)))));
-            this.ClientSize = new System.Drawing.Size(1520, 550);
+            this.ClientSize = new System.Drawing.Size(1465, 546);
             this.ControlBox = false;
+            this.Controls.Add(this.textQueueLabel);
+            this.Controls.Add(this.stepsSpeedLabel);
+            this.Controls.Add(this.stepsLabel);
+            this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.loadHistoryBtn);
             this.Controls.Add(this.setRegisters);
+            this.Controls.Add(this.maxBtn);
             this.Controls.Add(this.exitBtn);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.resetBtn);
@@ -541,11 +571,11 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.consoleOutBx);
             this.Controls.Add(this.r0Bx);
-            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.historyBx);
             this.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MinimumSize = new System.Drawing.Size(1465, 281);
             this.Name = "SynacorDebug";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Tag = "https://coolors.co/13293d-006494-247ba0-1b98e0-e8f1f2";
@@ -561,8 +591,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.r2Bx)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.r1Bx)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.r0Bx)).EndInit();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -571,11 +599,8 @@
         #endregion
 
         private System.Windows.Forms.RichTextBox historyBx;
-        private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.Button saveStateBtn;
         private System.Windows.Forms.Button loadStateBtn;
-        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
-        private System.Windows.Forms.ToolStripStatusLabel stepsLabel;
         private System.Windows.Forms.Button resetBtn;
         private System.Windows.Forms.Button newFromBinBtn;
         private System.Windows.Forms.Button startBtn;
@@ -592,15 +617,19 @@
         private System.Windows.Forms.NumericUpDown pointerBx;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown r0Bx;
-        private System.Windows.Forms.ToolStripStatusLabel stepsSpeedLabel;
         private System.Windows.Forms.RichTextBox consoleOutBx;
         private System.Windows.Forms.TextBox consoleInBx;
         private System.Windows.Forms.Button memoryBtn;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ToolStripStatusLabel textQueueLabel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button exitBtn;
         private System.Windows.Forms.Button setRegisters;
         private System.Windows.Forms.Button loadHistoryBtn;
+        private System.Windows.Forms.Button maxBtn;
+        private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Label statusLabel;
+        private System.Windows.Forms.Label stepsLabel;
+        private System.Windows.Forms.Label stepsSpeedLabel;
+        private System.Windows.Forms.Label textQueueLabel;
     }
 }

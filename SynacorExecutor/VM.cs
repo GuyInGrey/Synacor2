@@ -12,11 +12,11 @@ namespace SynacorExecutor
         public ushort[] Memory { get; set; }
         public ushort[] Registers { get; set; }
         public Stack<ushort> Stack { get; set; }
-        public int Pointer { get; set; }
+        public ushort Pointer { get; set; }
 
         // IO
         [JsonIgnore]
-        public Func<char> In;
+        public Func<char?> In;
         [JsonIgnore]
         public Action<char> Out;
         [JsonIgnore]
@@ -176,7 +176,9 @@ namespace SynacorExecutor
                     paramCount = 1;
                     break;
                 case OpCode.In:
-                    SetValue(In.Invoke(), P(0));
+                    var c = In.Invoke();
+                    if (!c.HasValue) { return OpCode.Cancelled; }
+                    SetValue(c.Value, P(0));
                     paramCount = 1;
                     break;
             }
@@ -197,7 +199,7 @@ namespace SynacorExecutor
                 });
             }
 
-            Pointer += jumped ? 0 : paramCount + 1;
+            Pointer += (ushort)(jumped ? 0 : paramCount + 1);
 
             IsStepping = false;
             return opCode;

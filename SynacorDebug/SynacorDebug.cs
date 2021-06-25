@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using SynacorExecutor;
 
@@ -33,10 +33,13 @@ namespace SynacorDebug
 
         public List<string> InputQueue = new();
         public bool WaitingForInput;
+        public bool InputCancelled;
 
         public SynacorDebug()
         {
             InitializeComponent();
+            DoubleBuffered = true;
+            SetStyle(ControlStyles.ResizeRedraw, true);
         }
 
         private void SynacorDebug_Load(object a, EventArgs e)
@@ -50,18 +53,20 @@ namespace SynacorDebug
         public void UpdateDebugValues()
         {
             statusLabel.Text = "Status: " + (
-                Machine is null ? "Nothing loaded." :
-                Machine.Halted ? "Program finished." :
-                WaitingForInput ? "Waiting for input." :
-                ControlState == 0 ? "Stopped." :
-                ControlState == 1 ? "Stepping once." :
+                Machine is null ? "No VM Loaded" :
+                Machine.Halted ? "Program Halted" :
+                WaitingForInput ? "Waiting For Input" :
+                ControlState == 0 ? "Paused" :
+                ControlState == 1 ? "Stepping Once" :
                 ControlState == 2 ? "Processing..." :
-                "Unkown.");
+                "Unkown");
 
             stepsLabel.Text = "Instructions Completed: " + InstructionCount;
-            stepsSpeedLabel.Text = "Time Per Instruction: " +
-            (AverageInstructionTime * 1000).ToString("0.0") +
-            " microseconds";
+            //stepsSpeedLabel.Text = "Time Per Instruction: " +
+            //(AverageInstructionTime * 1000).ToString("0.0") +
+            //" microseconds";
+            stepsSpeedLabel.Text = "Speed: " + 
+                (1000 / AverageInstructionTime).ToString("#,#.#") + " /second";
 
             if (Machine is not null)
             {
@@ -91,7 +96,7 @@ namespace SynacorDebug
                 }
             });
 
-            saveStateBtn.Enabled = Machine is not null && ControlState == 0 && !WaitingForInput;
+            saveStateBtn.Enabled = Machine is not null && (ControlState == 0 || WaitingForInput);
             stepBtn.Enabled = Machine is not null && ControlState == 0 && !WaitingForInput;
             startBtn.Enabled = Machine is not null && ControlState == 0 && !Machine.Halted && !WaitingForInput;
             stopBtn.Enabled = Machine is not null && ControlState == 2 && !Machine.Halted;
@@ -120,6 +125,7 @@ namespace SynacorDebug
                 stepWatch.Start();
                 var o = Machine.Step();
                 stepWatch.Stop();
+                if (o == OpCode.Cancelled) { return; }
                 if (o != OpCode.In)
                 {
                     AverageInstructionTime =
@@ -162,6 +168,7 @@ namespace SynacorDebug
                 while (WaitingForInput) { Thread.Sleep(1); }
             }
             InstructionCount = 0;
+            AverageInstructionTime = 0;
             historyBx.Clear();
             InputQueue = new();
             consoleInBx.Clear();
@@ -178,36 +185,44 @@ namespace SynacorDebug
             Reset();
             var bytes = File.ReadAllBytes(dia.FileName);
             var shorts = Utility.ConvertFromBytes(bytes);
-            Machine = new VM(shorts)
-            {
-                In = () =>
-                {
-                    WaitingForInput = true;
-                    while (InputQueue.Count <= 0)
-                    {
-                        Thread.Sleep(1);
-                    }
-                    var c = InputQueue[0][0];
-                    InputQueue[0] = InputQueue[0][1..];
-                    if (InputQueue[0].Length == 0)
-                    {
-                        InputQueue.RemoveAt(0);
-                    }
-                    WaitingForInput = false;
-                    return c;
-                },
-                Out = (o) =>Invoke(new Action(() => consoleOutBx.AppendText(o.ToString()))),
-                InstructionExecuted = (i) => instructionsToDebug.Add(i),
-            };
+            Machine = new VM(shorts);
+            SetupVM();
 
             startBtn.Enabled = true;
             stopBtn.Enabled = true;
             stepBtn.Enabled = true;
         }
 
+        public void SetupVM()
+        {
+            Machine.In = () =>
+            {
+                WaitingForInput = true;
+                while (InputQueue.Count <= 0 && !InputCancelled)
+                {
+                    Thread.Sleep(1);
+                }
+                WaitingForInput = false;
+                if (InputCancelled) { InputCancelled = false; return null; }
+                var c = InputQueue[0][0];
+                InputQueue[0] = InputQueue[0][1..];
+                if (InputQueue[0].Length == 0)
+                {
+                    InputQueue.RemoveAt(0);
+                }
+                return c;
+            };
+            Machine.Out = (o) => Invoke(new Action(() => consoleOutBx.AppendText(o.ToString())));
+            Machine.InstructionExecuted = (i) => instructionsToDebug.Add(i);
+        }
+
         private void StepBtn_Click(object a, EventArgs e) => ControlState = 1;
         private void StartBtn_Click(object a, EventArgs e) => ControlState = 2;
-        private void StopBtn_Click(object a, EventArgs e) => ControlState = 0;
+        private void StopBtn_Click(object a, EventArgs e)
+        {
+            ControlState = 0;
+            if (WaitingForInput) { InputCancelled = true; }
+        }
         private void OnFormClosed(object a, FormClosedEventArgs e)
         {
             ControlState = 0;
@@ -218,28 +233,89 @@ namespace SynacorDebug
 
         private void SaveStateBtn_Click(object a, EventArgs e)
         {
-            if (ControlState != 0) { return; }
-            while (Machine.IsStepping) { Thread.Sleep(50); }
-            var json = JsonConvert.SerializeObject(Machine);
+            var dia = new SaveFileDialog() { Filter = "Synacor Save State|*.synacor", };
+            if (dia.ShowDialog() != DialogResult.OK) { return; }
 
-            var dia = new SaveFileDialog()
+            var instQueue = new List<byte>(10 * instructionsToDebug.Count);
+            foreach (var i in instructionsToDebug)
             {
-                Filter = "Synacor Save State|*.syn.json",
-                OverwritePrompt = true,
+                instQueue.AddRange(BitConverter.GetBytes(i.Pointer));
+                instQueue.Add((byte)i.OpCode);
+                instQueue.Add((byte)i.Parameters.Length);
+                foreach (var p in i.Parameters)
+                {
+                    instQueue.AddRange(BitConverter.GetBytes(p));
+                }
+            }
+
+            var toSave = new JObject
+            {
+                ["memory"] = Convert.ToBase64String(Utility.ConvertToBytes(Machine.Memory)),
+                ["pointer"] = Machine.Pointer,
+                ["stack"] = new JArray(Machine.Stack),
+                ["registers"] = new JArray(Machine.Registers),
+                ["halted"] = Machine.Halted,
+                ["outBx"] = consoleOutBx.Text,
+                ["inBx"] = consoleInBx.Text,
+                ["inQueue"] = new JArray(InputQueue),
+                ["historyBx"] = historyBx.Text,
+                ["instructionQueue"] = Convert.ToBase64String(instQueue.ToArray()),
+                ["instructionsCompleted"] = InstructionCount,
             };
 
-            if (dia.ShowDialog() == DialogResult.OK)
-            {
-                File.WriteAllText(dia.FileName, json);
-            }
+            File.WriteAllText(dia.FileName, toSave.ToString(Formatting.Indented).Compress());
+            MessageBox.Show("Save complete.", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void LoadStateBtn_Click(object a, EventArgs e)
         {
+            var dia = new OpenFileDialog() { Filter = "Synacor Save State|*.synacor", };
+            if (dia.ShowDialog() != DialogResult.OK) { return; }
 
+            Reset();
+
+            var obj = JObject.Parse(File.ReadAllText(dia.FileName).Decompress());
+            Machine = new VM(Utility.ConvertFromBytes(Convert.FromBase64String(obj["memory"].Value<string>())))
+            {
+                Pointer = obj["pointer"].Value<ushort>(),
+                Stack = new Stack<ushort>((obj["stack"] as JArray).Select(j => j.Value<ushort>())),
+                Registers = (obj["stack"] as JArray).Select(j => j.Value<ushort>()).ToArray(),
+                Halted = obj["halted"].Value<bool>(),
+            };
+            SetupVM();
+
+            consoleOutBx.AppendText(obj["outBx"].Value<string>());
+            consoleInBx.AppendText(obj["inBx"].Value<string>());
+            historyBx.AppendText(obj["historyBx"].Value<string>());
+
+            InputQueue = (obj["inQueue"] as JArray).Select(j => j.Value<string>()).ToList();
+            InstructionCount = obj["instructionsCompleted"].Value<int>();
+
+            var instBytes = Convert.FromBase64String(obj["instructionQueue"].Value<string>());
+            for (var i = 0; i < instBytes.Length; )
+            {
+                var inst = new Instruction()
+                {
+                    Pointer = BitConverter.ToUInt16(instBytes, i),
+                    OpCode = (OpCode)instBytes[i + 2],
+                };
+
+                var paramCount = instBytes[i + 3];
+                inst.Parameters = new ushort[paramCount];
+                i += 4;
+                for (var j = 0; j < paramCount; j++)
+                {
+                    inst.Parameters[j] = BitConverter.ToUInt16(instBytes, i);
+                    i += 2;
+                }
+
+                instructionsToDebug.Add(inst);
+            }
+
+            MessageBox.Show("Load complete.", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void PointerBx_ValueChanged(object a, EventArgs e) => Machine.Pointer = (int)pointerBx.Value;
+        private void PointerBx_ValueChanged(object a, EventArgs e) => Machine.Pointer = (ushort)pointerBx.Value;
 
         private void ConsoleInBx_TextChanged(object sender, EventArgs e)
         {
@@ -311,6 +387,42 @@ namespace SynacorDebug
             }
             instructionsToDebug.Clear();
             historyBx.AppendText(b.ToString());
+        }
+
+        private void MaxBtn_Click(object sender, EventArgs e)
+        {
+            MaximizedBounds = Screen.GetWorkingArea(this);
+            if (WindowState == FormWindowState.Maximized)
+            {
+                WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                WindowState = FormWindowState.Maximized;
+            }
+        }
+
+        private const int cGrip = 16;      // Grip size
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var rc = new Rectangle(ClientSize.Width - cGrip, ClientSize.Height - cGrip, cGrip, cGrip);
+            ControlPaint.DrawSizeGrip(e.Graphics, BackColor, rc);
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x84)
+            {  // Trap WM_NCHITTEST
+                var pos = new Point(m.LParam.ToInt32());
+                pos = PointToClient(pos);
+                if (pos.X >= ClientSize.Width - cGrip && pos.Y >= ClientSize.Height - cGrip)
+                {
+                    m.Result = (IntPtr)17; // HTBOTTOMRIGHT
+                    return;
+                }
+            }
+            base.WndProc(ref m);
         }
     }
 }
