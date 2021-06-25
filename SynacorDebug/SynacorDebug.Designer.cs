@@ -56,11 +56,10 @@
             this.consoleOutBx = new System.Windows.Forms.RichTextBox();
             this.consoleInBx = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.historyLimitBx = new System.Windows.Forms.NumericUpDown();
-            this.label14 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.exitBtn = new System.Windows.Forms.Button();
             this.setRegisters = new System.Windows.Forms.Button();
+            this.loadHistoryBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.r7Bx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pointerBx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.r6Bx)).BeginInit();
@@ -71,7 +70,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.r1Bx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.r0Bx)).BeginInit();
             this.statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.historyLimitBx)).BeginInit();
             this.SuspendLayout();
             // 
             // historyBx
@@ -86,7 +84,7 @@
             this.historyBx.Location = new System.Drawing.Point(12, 47);
             this.historyBx.Name = "historyBx";
             this.historyBx.ReadOnly = true;
-            this.historyBx.Size = new System.Drawing.Size(231, 444);
+            this.historyBx.Size = new System.Drawing.Size(231, 478);
             this.historyBx.TabIndex = 0;
             this.historyBx.Text = "";
             // 
@@ -453,43 +451,6 @@
             this.label4.TabIndex = 39;
             this.label4.Text = "Instruction History";
             // 
-            // historyLimitBx
-            // 
-            this.historyLimitBx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.historyLimitBx.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
-            this.historyLimitBx.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.historyLimitBx.ForeColor = System.Drawing.Color.White;
-            this.historyLimitBx.Location = new System.Drawing.Point(146, 499);
-            this.historyLimitBx.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.historyLimitBx.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            -2147483648});
-            this.historyLimitBx.Name = "historyLimitBx";
-            this.historyLimitBx.Size = new System.Drawing.Size(97, 18);
-            this.historyLimitBx.TabIndex = 33;
-            this.historyLimitBx.Value = new decimal(new int[] {
-            500,
-            0,
-            0,
-            0});
-            // 
-            // label14
-            // 
-            this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(12, 494);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(133, 28);
-            this.label14.TabIndex = 40;
-            this.label14.Text = "Limit\r\n(-1 for unlimited)";
-            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -533,6 +494,20 @@
             this.setRegisters.UseVisualStyleBackColor = false;
             this.setRegisters.Click += new System.EventHandler(this.SetRegisters_Click);
             // 
+            // loadHistoryBtn
+            // 
+            this.loadHistoryBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
+            this.loadHistoryBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.history;
+            this.loadHistoryBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.loadHistoryBtn.FlatAppearance.BorderSize = 0;
+            this.loadHistoryBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.loadHistoryBtn.Location = new System.Drawing.Point(12, 6);
+            this.loadHistoryBtn.Name = "loadHistoryBtn";
+            this.loadHistoryBtn.Size = new System.Drawing.Size(35, 35);
+            this.loadHistoryBtn.TabIndex = 44;
+            this.loadHistoryBtn.UseVisualStyleBackColor = false;
+            this.loadHistoryBtn.Click += new System.EventHandler(this.LoadHistoryBtn_Click);
+            // 
             // SynacorDebug
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -540,6 +515,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(100)))), ((int)(((byte)(148)))));
             this.ClientSize = new System.Drawing.Size(1520, 550);
             this.ControlBox = false;
+            this.Controls.Add(this.loadHistoryBtn);
             this.Controls.Add(this.setRegisters);
             this.Controls.Add(this.exitBtn);
             this.Controls.Add(this.label1);
@@ -550,12 +526,10 @@
             this.Controls.Add(this.pointerBx);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.r6Bx);
-            this.Controls.Add(this.label14);
             this.Controls.Add(this.saveStateBtn);
             this.Controls.Add(this.r5Bx);
             this.Controls.Add(this.loadStateBtn);
             this.Controls.Add(this.r4Bx);
-            this.Controls.Add(this.historyLimitBx);
             this.Controls.Add(this.r3Bx);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.stepBtn);
@@ -589,7 +563,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.r0Bx)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.historyLimitBx)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -624,11 +597,10 @@
         private System.Windows.Forms.TextBox consoleInBx;
         private System.Windows.Forms.Button memoryBtn;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.NumericUpDown historyLimitBx;
-        private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripStatusLabel textQueueLabel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button exitBtn;
         private System.Windows.Forms.Button setRegisters;
+        private System.Windows.Forms.Button loadHistoryBtn;
     }
 }

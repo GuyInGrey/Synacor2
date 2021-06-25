@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,7 +27,7 @@ namespace SynacorDebug
         // 0 = Paused, 1 = Step once, 2 = Step continuously
         public int ControlState;
 
-        public ConcurrentQueue<Instruction> instructionsToDebug = new();
+        public List<Instruction> instructionsToDebug;
         public int InstructionCount = 0;
         public double AverageInstructionTime = 0;
 
@@ -40,16 +41,6 @@ namespace SynacorDebug
 
         private void SynacorDebug_Load(object a, EventArgs e)
         {
-            // This doesn't work; leaves transparent boxes next to the NumericUpDown's
-            //this.ForAllControls((c) =>
-            //{
-            //    if (c is NumericUpDown n)
-            //    {
-            //        n.Controls.RemoveAt(0);
-            //        n.Controls[0].Width = n.Width - 4;
-            //    }
-            //});
-
             VMThread = new Thread(VMThreadMethod);
             VMThread.Start();
             DebugThread = new Thread(UpdateDebugValuesThread);
@@ -109,38 +100,6 @@ namespace SynacorDebug
                 InputQueue.Count <= 0 ?
                 "No Text Queued" :
                 "Queued Text: " + InputQueue[0].Replace("\n", "") + " ⮯";
-
-            //var s = "";
-            //while (!instructionsToDebug.IsEmpty)
-            //{
-            //    if (!instructionsToDebug.TryDequeue(out var item)) { break; }
-            //    if (item.OpCode == OpCode.Noop) { continue; }
-
-            //    var pointer = item.Pointer.ToString().PadRight(6, ' ');
-
-            //    s += $"{pointer} {item.OpCode} ";
-            //    if (item.OpCode == OpCode.Out)
-            //    {
-            //        var ch = ((char)item.Parameters[0]).ToString().Replace("\n", "\\n");
-            //        s += $"{ch}";
-            //    }
-            //    else
-            //    {
-            //        s += $"{string.Join(' ', item.Parameters)}";
-            //    }
-
-            //    s += "\n";
-            //}
-            //historyBx.AppendText(s);
-
-            //var lines = historyBx.Text.Split("\n");
-            //if (lines.Length > (float)historyLimitBx.Value && historyLimitBx.Value != -1)
-            //{
-            //    lines = lines.TakeLast((int)historyLimitBx.Value).ToArray();
-            //    historyBx.Text = string.Join('\n', lines) + "\n";
-            //    historyBx.Select(historyBx.Text.Length, 0);
-            //    historyBx.ScrollToCaret();
-            //}
         }
 
         public void UpdateDebugValuesThread()
@@ -186,7 +145,7 @@ namespace SynacorDebug
                 goto start;
             }
 
-            while (ControlState == 2 && !Machine.Halted) // Step until stopped or halted
+            while (ControlState == 2 && Machine is not null && !Machine.Halted) // Step until stopped or halted
             {
                 Step();
             }
@@ -197,11 +156,17 @@ namespace SynacorDebug
         private void Reset()
         {
             Machine = null;
+            if (WaitingForInput)
+            {
+                InputQueue.Add("\n");
+                while (WaitingForInput) { Thread.Sleep(1); }
+            }
             InstructionCount = 0;
             historyBx.Clear();
             InputQueue = new();
             consoleInBx.Clear();
             consoleOutBx.Clear();
+            instructionsToDebug = new(10000000);
         }
 
         private void NewFromBinBtn_Click(object a, EventArgs e)
@@ -231,8 +196,8 @@ namespace SynacorDebug
                     WaitingForInput = false;
                     return c;
                 },
-                Out = (o) => Task.Run(() => Invoke(new Action(() => consoleOutBx.AppendText(o.ToString())))),
-                InstructionExecuted = (i) => instructionsToDebug.Enqueue(i),
+                Out = (o) =>Invoke(new Action(() => consoleOutBx.AppendText(o.ToString()))),
+                InstructionExecuted = (i) => instructionsToDebug.Add(i),
             };
 
             startBtn.Enabled = true;
@@ -321,6 +286,31 @@ namespace SynacorDebug
             Machine.Registers[5] = (ushort)r5Bx.Value;
             Machine.Registers[6] = (ushort)r6Bx.Value;
             Machine.Registers[7] = (ushort)r7Bx.Value;
+        }
+
+        private void LoadHistoryBtn_Click(object sender, EventArgs e)
+        {
+            var b = new StringBuilder();
+            foreach (var item in instructionsToDebug)
+            {
+                if (item.OpCode == OpCode.Noop) { continue; }
+
+                var pointer = item.Pointer.ToString().PadRight(6, ' ');
+
+                b.Append($"{pointer} {item.OpCode} ");
+                if (item.OpCode == OpCode.Out)
+                {
+                    b.Append(((char)item.Parameters[0]).ToString().Replace("\n", "\\n"));
+                }
+                else
+                {
+                    b.Append(string.Join(' ', item.Parameters));
+                }
+
+                b.Append('\n');
+            }
+            instructionsToDebug.Clear();
+            historyBx.AppendText(b.ToString());
         }
     }
 }
