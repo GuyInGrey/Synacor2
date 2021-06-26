@@ -48,6 +48,9 @@ namespace SynacorDebug
             VMThread.Start();
             DebugThread = new Thread(UpdateDebugValuesThread);
             DebugThread.Start();
+
+            MaximizedBounds = Screen.GetWorkingArea(this);
+            WindowState = FormWindowState.Maximized;
         }
 
         public void UpdateDebugValues()
@@ -266,7 +269,7 @@ namespace SynacorDebug
                 ["stack"] = new JArray(Machine.Stack),
                 ["registers"] = new JArray(Machine.Registers),
                 ["halted"] = Machine.Halted,
-                ["outBx"] = consoleOutBx.Text,
+                ["outBx"] = consoleOutBx.Rtf,
                 ["inBx"] = consoleInBx.Text,
                 ["inQueue"] = new JArray(InputQueue),
                 ["historyBx"] = historyBx.Text,
@@ -295,7 +298,8 @@ namespace SynacorDebug
             };
             SetupVM();
 
-            consoleOutBx.AppendText(obj["outBx"].Value<string>());
+            consoleOutBx.SelectedRtf = obj["outBx"].Value<string>();
+            consoleOutBx.Select(consoleOutBx.TextLength, 0);
             consoleInBx.AppendText(obj["inBx"].Value<string>());
             historyBx.AppendText(obj["historyBx"].Value<string>());
 
@@ -335,7 +339,13 @@ namespace SynacorDebug
             var items = consoleInBx.Text.Split("\n", StringSplitOptions.RemoveEmptyEntries)
                 .Select(i => i.Replace("\r", "") + "\n").ToList();
 
-            items.ForEach(i => InputQueue.Add(i));
+            items.ForEach(i =>
+            {
+                InputQueue.Add(i);
+                consoleOutBx.SelectionColor = Color.Gray;
+                consoleOutBx.AppendText("> " + i);
+                consoleOutBx.SelectionColor = Color.White;
+            });
 
             consoleInBx.Clear();
         }
@@ -402,7 +412,6 @@ namespace SynacorDebug
 
         private void MaxBtn_Click(object sender, EventArgs e)
         {
-            MaximizedBounds = Screen.GetWorkingArea(this);
             if (WindowState == FormWindowState.Maximized)
             {
                 WindowState = FormWindowState.Normal;
@@ -443,6 +452,24 @@ namespace SynacorDebug
 
             File.WriteAllText(dia.FileName, JsonConvert.SerializeObject(Machine, Formatting.Indented));
             MessageBox.Show("VM Dumped\n\n" + dia.FileName, "Dump Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        [DllImport("gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
+        private static extern IntPtr CreateRoundRectRgn
+        (
+            int nLeftRect, // X-coordinate of upper-left corner or padding at start
+            int nTopRect,// Y-coordinate of upper-left corner or padding at the top of the textbox
+            int nRightRect, // X-coordinate of lower-right corner or Width of the object
+            int nBottomRect,// Y-coordinate of lower-right corner or Height of the object
+                            //RADIUS, how round do you want it to be?
+            int nheightRect, //height of ellipse 
+            int nweightRect //width of ellipse
+        );
+
+        private void Resize_RoundedControl(object sender, EventArgs e)
+        {
+            var b = (Control)sender;
+            b.Region = Region.FromHrgn(CreateRoundRectRgn(2, 3, b.Width, b.Height, 10, 10));
         }
     }
 }

@@ -58,10 +58,14 @@
             this.loadHistoryBtn = new System.Windows.Forms.Button();
             this.maxBtn = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.statusLabel = new System.Windows.Forms.Label();
-            this.stepsLabel = new System.Windows.Forms.Label();
-            this.stepsSpeedLabel = new System.Windows.Forms.Label();
-            this.textQueueLabel = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.stepsLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.stepsSpeedLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.textQueueLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
             ((System.ComponentModel.ISupportInitialize)(this.r7Bx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pointerBx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.r6Bx)).BeginInit();
@@ -71,6 +75,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.r2Bx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.r1Bx)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.r0Bx)).BeginInit();
+            this.panel2.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // historyBx
@@ -85,13 +91,13 @@
             this.historyBx.Location = new System.Drawing.Point(12, 47);
             this.historyBx.Name = "historyBx";
             this.historyBx.ReadOnly = true;
+            this.historyBx.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
             this.historyBx.Size = new System.Drawing.Size(231, 474);
             this.historyBx.TabIndex = 0;
             this.historyBx.Text = "";
             // 
             // dumpVMBtn
             // 
-            this.dumpVMBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.dumpVMBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.memory;
             this.dumpVMBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.dumpVMBtn.Enabled = false;
@@ -107,7 +113,6 @@
             // 
             // stepBtn
             // 
-            this.stepBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.stepBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.down;
             this.stepBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.stepBtn.Enabled = false;
@@ -123,7 +128,6 @@
             // 
             // stopBtn
             // 
-            this.stopBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.stopBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.pause1;
             this.stopBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.stopBtn.Enabled = false;
@@ -139,7 +143,6 @@
             // 
             // startBtn
             // 
-            this.startBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.startBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.play1;
             this.startBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.startBtn.Enabled = false;
@@ -155,7 +158,6 @@
             // 
             // resetBtn
             // 
-            this.resetBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.resetBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.reset;
             this.resetBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.resetBtn.FlatAppearance.BorderSize = 0;
@@ -170,7 +172,6 @@
             // 
             // newFromBinBtn
             // 
-            this.newFromBinBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.newFromBinBtn.BackgroundImage = global::SynacorDebug.Properties.Resources._new;
             this.newFromBinBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.newFromBinBtn.FlatAppearance.BorderSize = 0;
@@ -185,7 +186,6 @@
             // 
             // saveStateBtn
             // 
-            this.saveStateBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.saveStateBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.save;
             this.saveStateBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.saveStateBtn.Enabled = false;
@@ -201,7 +201,6 @@
             // 
             // loadStateBtn
             // 
-            this.loadStateBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.loadStateBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.open;
             this.loadStateBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.loadStateBtn.FlatAppearance.BorderSize = 0;
@@ -401,12 +400,13 @@
             this.consoleInBx.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.consoleInBx.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.consoleInBx.ForeColor = System.Drawing.Color.White;
-            this.consoleInBx.Location = new System.Drawing.Point(249, 493);
+            this.consoleInBx.Location = new System.Drawing.Point(258, 493);
             this.consoleInBx.Multiline = true;
             this.consoleInBx.Name = "consoleInBx";
-            this.consoleInBx.Size = new System.Drawing.Size(1204, 28);
+            this.consoleInBx.Size = new System.Drawing.Size(1182, 28);
             this.consoleInBx.TabIndex = 37;
             this.consoleInBx.TextChanged += new System.EventHandler(this.ConsoleInBx_TextChanged);
+            this.consoleInBx.Resize += new System.EventHandler(this.Resize_RoundedControl);
             // 
             // label4
             // 
@@ -433,7 +433,6 @@
             // exitBtn
             // 
             this.exitBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.exitBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.exitBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.exitBtn.FlatAppearance.BorderSize = 0;
             this.exitBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -449,7 +448,6 @@
             // 
             // setRegisters
             // 
-            this.setRegisters.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.setRegisters.BackgroundImage = global::SynacorDebug.Properties.Resources.edit;
             this.setRegisters.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.setRegisters.FlatAppearance.BorderSize = 0;
@@ -465,7 +463,6 @@
             // 
             // loadHistoryBtn
             // 
-            this.loadHistoryBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.loadHistoryBtn.BackgroundImage = global::SynacorDebug.Properties.Resources.history;
             this.loadHistoryBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.loadHistoryBtn.FlatAppearance.BorderSize = 0;
@@ -481,7 +478,6 @@
             // maxBtn
             // 
             this.maxBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.maxBtn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(36)))), ((int)(((byte)(123)))), ((int)(((byte)(160)))));
             this.maxBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.maxBtn.FlatAppearance.BorderSize = 0;
             this.maxBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -495,45 +491,73 @@
             this.maxBtn.UseVisualStyleBackColor = false;
             this.maxBtn.Click += new System.EventHandler(this.MaxBtn_Click);
             // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(41)))), ((int)(((byte)(61)))));
+            this.panel1.Location = new System.Drawing.Point(12, 520);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(231, 30);
+            this.panel1.TabIndex = 49;
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(41)))), ((int)(((byte)(61)))));
+            this.panel2.Controls.Add(this.statusStrip1);
+            this.panel2.Location = new System.Drawing.Point(249, 482);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1204, 65);
+            this.panel2.TabIndex = 50;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(41)))), ((int)(((byte)(61)))));
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusLabel,
+            this.stepsLabel,
+            this.stepsSpeedLabel,
+            this.textQueueLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 43);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1204, 22);
+            this.statusStrip1.SizingGrip = false;
+            this.statusStrip1.TabIndex = 0;
+            // 
             // statusLabel
             // 
-            this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.statusLabel.AutoSize = true;
-            this.statusLabel.Location = new System.Drawing.Point(12, 524);
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(49, 14);
-            this.statusLabel.TabIndex = 45;
-            this.statusLabel.Text = "label2";
+            this.statusLabel.Size = new System.Drawing.Size(118, 17);
+            this.statusLabel.Text = "toolStripStatusLabel1";
             // 
             // stepsLabel
             // 
-            this.stepsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.stepsLabel.AutoSize = true;
-            this.stepsLabel.Location = new System.Drawing.Point(249, 524);
+            this.stepsLabel.Margin = new System.Windows.Forms.Padding(15, 3, 0, 2);
             this.stepsLabel.Name = "stepsLabel";
-            this.stepsLabel.Size = new System.Drawing.Size(49, 14);
-            this.stepsLabel.TabIndex = 46;
-            this.stepsLabel.Text = "label2";
+            this.stepsLabel.Size = new System.Drawing.Size(118, 17);
+            this.stepsLabel.Text = "toolStripStatusLabel1";
             // 
             // stepsSpeedLabel
             // 
-            this.stepsSpeedLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.stepsSpeedLabel.AutoSize = true;
-            this.stepsSpeedLabel.Location = new System.Drawing.Point(554, 524);
+            this.stepsSpeedLabel.Margin = new System.Windows.Forms.Padding(15, 3, 0, 2);
             this.stepsSpeedLabel.Name = "stepsSpeedLabel";
-            this.stepsSpeedLabel.Size = new System.Drawing.Size(49, 14);
-            this.stepsSpeedLabel.TabIndex = 47;
-            this.stepsSpeedLabel.Text = "label2";
+            this.stepsSpeedLabel.Size = new System.Drawing.Size(118, 17);
+            this.stepsSpeedLabel.Text = "toolStripStatusLabel1";
             // 
             // textQueueLabel
             // 
-            this.textQueueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.textQueueLabel.AutoSize = true;
-            this.textQueueLabel.Location = new System.Drawing.Point(847, 524);
+            this.textQueueLabel.Margin = new System.Windows.Forms.Padding(15, 3, 0, 2);
             this.textQueueLabel.Name = "textQueueLabel";
-            this.textQueueLabel.Size = new System.Drawing.Size(49, 14);
-            this.textQueueLabel.TabIndex = 48;
-            this.textQueueLabel.Text = "label2";
+            this.textQueueLabel.Size = new System.Drawing.Size(118, 17);
+            this.textQueueLabel.Text = "toolStripStatusLabel1";
+            // 
+            // vScrollBar1
+            // 
+            this.vScrollBar1.Location = new System.Drawing.Point(226, 47);
+            this.vScrollBar1.Name = "vScrollBar1";
+            this.vScrollBar1.Size = new System.Drawing.Size(17, 474);
+            this.vScrollBar1.TabIndex = 51;
             // 
             // SynacorDebug
             // 
@@ -542,10 +566,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(100)))), ((int)(((byte)(148)))));
             this.ClientSize = new System.Drawing.Size(1465, 546);
             this.ControlBox = false;
-            this.Controls.Add(this.textQueueLabel);
-            this.Controls.Add(this.stepsSpeedLabel);
-            this.Controls.Add(this.stepsLabel);
-            this.Controls.Add(this.statusLabel);
+            this.Controls.Add(this.vScrollBar1);
             this.Controls.Add(this.loadHistoryBtn);
             this.Controls.Add(this.setRegisters);
             this.Controls.Add(this.maxBtn);
@@ -574,6 +595,8 @@
             this.Controls.Add(this.consoleOutBx);
             this.Controls.Add(this.r0Bx);
             this.Controls.Add(this.historyBx);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel2);
             this.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.ForeColor = System.Drawing.Color.White;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -593,6 +616,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.r2Bx)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.r1Bx)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.r0Bx)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -629,9 +656,13 @@
         private System.Windows.Forms.Button loadHistoryBtn;
         private System.Windows.Forms.Button maxBtn;
         private System.Windows.Forms.ToolTip toolTip;
-        private System.Windows.Forms.Label statusLabel;
-        private System.Windows.Forms.Label stepsLabel;
-        private System.Windows.Forms.Label stepsSpeedLabel;
-        private System.Windows.Forms.Label textQueueLabel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel stepsLabel;
+        private System.Windows.Forms.ToolStripStatusLabel stepsSpeedLabel;
+        private System.Windows.Forms.ToolStripStatusLabel textQueueLabel;
+        private System.Windows.Forms.VScrollBar vScrollBar1;
     }
 }
