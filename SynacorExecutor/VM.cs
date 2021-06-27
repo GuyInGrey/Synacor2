@@ -194,7 +194,7 @@ namespace SynacorExecutor
 
                 InstructionExecuted.Invoke(new Instruction()
                 {
-                    Pointer = Pointer,
+                    Pointer = oldPointer,
                     OpCode = opCode,
                     Parameters = p,
                 });

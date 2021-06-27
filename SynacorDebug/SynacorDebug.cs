@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -27,13 +28,16 @@ namespace SynacorDebug
         // 0 = Paused, 1 = Step once, 2 = Step continuously
         public int ControlState;
 
-        public List<Instruction> instructionsToDebug;
+        public ConcurrentQueue<Instruction> instructionsToDebug;
         public int InstructionCount = 0;
         public double AverageInstructionTime = 0;
 
         public List<string> InputQueue = new();
         public bool WaitingForInput;
         public bool InputCancelled;
+
+        public double Delay;
+        public bool History;
 
         public SynacorDebug()
         {
@@ -98,7 +102,34 @@ namespace SynacorDebug
             textQueueLabel.Text =
                 InputQueue.Count <= 0 ?
                 "No Text Queued" :
-                "Queued Text: " + InputQueue[0].Replace("\n", "") + " ⮯";
+                //"Queued Text: " + InputQueue[0].Replace("\n", "") + " ⮯";
+                "Queued Text: " + string.Join("", InputQueue.Select(i => i.Replace("\n", " ⮯   ")));
+
+            if (History && instructionsToDebug is not null)
+            {
+                var b = new StringBuilder();
+                while (!instructionsToDebug.IsEmpty)
+                {
+                    if (!instructionsToDebug.TryDequeue(out var item)) { continue; }
+                    if (item.OpCode == OpCode.Noop) { continue; }
+
+                    var pointer = item.Pointer.ToString().PadRight(6, ' ');
+
+                    b.Append($"{pointer} {item.OpCode} ");
+                    if (item.OpCode == OpCode.Out)
+                    {
+                        b.Append(((char)item.Parameters[0]).ToString().Replace("\n", "\\n"));
+                    }
+                    else
+                    {
+                        b.Append(string.Join(' ', item.Parameters));
+                    }
+
+                    b.Append('\n');
+                }
+                instructionsToDebug.Clear();
+                historyBx.AppendText(b.ToString());
+            }
         }
 
         public void UpdateDebugValuesThread()
@@ -148,6 +179,10 @@ namespace SynacorDebug
             while (ControlState == 2 && Machine is not null && !Machine.Halted) // Step until stopped or halted
             {
                 Step();
+                if (Delay > 0)
+                {
+                    Extensions.NOP(Delay / 1000d);
+                }
             }
             ControlState = 0;
             goto start;
@@ -167,7 +202,7 @@ namespace SynacorDebug
             InputQueue = new();
             consoleInBx.Clear();
             consoleOutBx.Clear();
-            instructionsToDebug = new(10000000);
+            instructionsToDebug = new();
         }
 
         private void NewFromBinBtn_Click(object a, EventArgs e)
@@ -207,7 +242,7 @@ namespace SynacorDebug
                 return c;
             };
             Machine.Out = (o) => Invoke(new Action(() => consoleOutBx.AppendText(o.ToString())));
-            Machine.InstructionExecuted = (i) => instructionsToDebug.Add(i);
+            Machine.InstructionExecuted = (i) => instructionsToDebug.Enqueue(i);
         }
 
         public void UpdateDebugBoxes()
@@ -224,7 +259,6 @@ namespace SynacorDebug
                 r7Bx.Value = Machine.Registers[7];
 
                 pointerBx.Value = Machine.Pointer;
-
             }
         }
 
@@ -324,7 +358,7 @@ namespace SynacorDebug
                     i += 2;
                 }
 
-                instructionsToDebug.Add(inst);
+                instructionsToDebug.Enqueue(inst);
             }
 
             MessageBox.Show("Load complete.", "Finished", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -383,31 +417,7 @@ namespace SynacorDebug
             Machine.Registers[5] = (ushort)r5Bx.Value;
             Machine.Registers[6] = (ushort)r6Bx.Value;
             Machine.Registers[7] = (ushort)r7Bx.Value;
-        }
-
-        private void LoadHistoryBtn_Click(object sender, EventArgs e)
-        {
-            var b = new StringBuilder();
-            foreach (var item in instructionsToDebug)
-            {
-                if (item.OpCode == OpCode.Noop) { continue; }
-
-                var pointer = item.Pointer.ToString().PadRight(6, ' ');
-
-                b.Append($"{pointer} {item.OpCode} ");
-                if (item.OpCode == OpCode.Out)
-                {
-                    b.Append(((char)item.Parameters[0]).ToString().Replace("\n", "\\n"));
-                }
-                else
-                {
-                    b.Append(string.Join(' ', item.Parameters));
-                }
-
-                b.Append('\n');
-            }
-            instructionsToDebug.Clear();
-            historyBx.AppendText(b.ToString());
+            Machine.Pointer = (ushort)pointerBx.Value;
         }
 
         private void MaxBtn_Click(object sender, EventArgs e)
@@ -470,6 +480,16 @@ namespace SynacorDebug
         {
             var b = (Control)sender;
             b.Region = Region.FromHrgn(CreateRoundRectRgn(2, 3, b.Width, b.Height, 10, 10));
+        }
+
+        private void DelayBx_ValueChanged(object sender, EventArgs e)
+        {
+            Delay = (double)delayBx.Value;
+        }
+
+        private void HistoryCheckBx_CheckedChanged(object sender, EventArgs e)
+        {
+            History = historyCheckBx.Checked;
         }
     }
 }
