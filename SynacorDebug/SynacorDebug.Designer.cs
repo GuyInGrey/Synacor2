@@ -649,6 +649,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.OnFormClosed);
             this.Load += new System.EventHandler(this.SynacorDebug_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SynacorDebug_MouseDown);
+            this.Resize += new System.EventHandler(this.Resize_RoundedControl);
             ((System.ComponentModel.ISupportInitialize)(this.r7Bx)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pointerBx)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.r6Bx)).EndInit();
