@@ -6,9 +6,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Newtonsoft.Json;
@@ -38,9 +40,11 @@ namespace SynacorDebug
 
         public double Delay;
         public bool History;
+        SoundPlayer player = new("C:\\beep.wav");
 
         public SynacorDebug()
         {
+            player.Load();
             InitializeComponent();
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
@@ -241,7 +245,13 @@ namespace SynacorDebug
                 }
                 return c;
             };
-            Machine.Out = (o) => Invoke(new Action(() => consoleOutBx.AppendText(o.ToString())));
+            Machine.Out = (o) =>
+            {
+                Invoke(new Action(() => {
+                    consoleOutBx.AppendText(o.ToString());
+                    player.Play();
+                }));
+            };
             Machine.InstructionExecuted = (i) => instructionsToDebug.Enqueue(i);
         }
 
